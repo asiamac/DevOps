@@ -5,7 +5,7 @@ services:
 
 
 before_install:
-  - docker build -t jmackowiak/frontend-hello -f frontend-hello/Dockerfile.dev ./frontend-hello
+  - docker build -t jmackowiak/frontend-hello -f ./frontend-hello/Dockerfile.dev ./frontend-hello
 
 
 script:
