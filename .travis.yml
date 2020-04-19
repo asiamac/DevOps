@@ -1,0 +1,12 @@
+sudo: required
+
+services:
+  - docker
+
+
+before_install:
+  - docker build -t jmackowiak/frontend-hello -f frontend-hello/Dockerfile.dev ./frontend-hello
+
+
+script:
+  - docker run -e CI=true jmackowiak/frontend-hello yarn test
