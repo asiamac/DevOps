@@ -71,7 +71,7 @@ app.get('/calculate', (req, resp) => {
 
     redisClient.set(cacheKey, distance);
     pgClient
-      .query("INSERT INTO distance_values (angle, speed, distance) VALUES ($1, $2, $3);", [angle, speed, distance])
+      .query('INSERT INTO distance_values (angle, speed, distance) VALUES ($1, $2, $3);', [angle, speed, distance])
       .catch(err => console.log(err));
     return distance;
   }
