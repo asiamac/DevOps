@@ -1,10 +1,8 @@
 const keys = require('./keys');
 
-const express = require("express");
-const bodyParser = require("body-parser");
-const cors = require("cors");
-
-// const redis = require("redis");
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
 
 const app = express();
 app.use(cors());
@@ -23,17 +21,18 @@ const pgClient = new Pool({
 pgClient.on('error', () => console.log('Lost PG conenction'));
 
 pgClient
-  .query('CREATE TABLE IF NOT EXISTS gcd_values (number INT)')
+  .query('CREATE TABLE IF NOT EXISTS gcd_values (number INT);')
   .catch(err => console.log(err));
 
-// Redis Client Setup 
+// Redis Client Setup
+const redis = require('redis');
 const redisClient = redis.createClient({
   host: keys.redisHost,
   port: keys.redisPort
 });
 
 app.listen(5000, () => {
-  console.log("Backend Listening on port 5000");
+  console.log('Backend Listening on port 5000');
 });
 
 // Get GCD for two numbers - from Redis cache or compute
@@ -76,7 +75,7 @@ app.get('/:l1,:l2', (req, resp) => {
 
     redisClient.set(cacheKey, gcd);
     pgClient
-        .query("INSERT INTO gcd_values (number) VALUES ($1)", [gcd])
+        .query('INSERT INTO gcd_values (number) VALUES ($1);', [gcd])
         .catch(err => console.log(err));
     return gcd;
   }
