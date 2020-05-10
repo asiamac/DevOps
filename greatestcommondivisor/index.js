@@ -9,8 +9,6 @@ const client = redis.createClient({
   port: 6379
 });
 
-// client.set('counter', 0);
-
 app.get('/', (req, resp) => {
 
   let l1 = req.query.l1
