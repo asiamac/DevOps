@@ -8,7 +8,6 @@ metadata:
     app: my-backend
     type: backend
 
-
 spec:
   template:
     metadata:
