@@ -27,3 +27,14 @@ Templates for creating:
 * POD `pod-template.yml`,
 * ReplicaSet `rs-template.yml`,
 * Deployment `deployment-template.yml`.
+
+## my-cluster2
+Cluster with:
+* Redis,
+* service type ClusterIP (Redis - redis-service),
+* Dnsutils,
+* backend based on Express.js connected to redis-service,
+* service type NodePort.
+URLs:
+* `/` - present current and previous app ID,
+* `/calculate?l1=&l2` - GCD for provided two numbers - from Redis cache or calculated.
