@@ -7,5 +7,5 @@ metadata:
 
 data:
   PGUSER: "postgres"
-  PGPORT: 5432
-  REDIS: 6379
+  PGPORT: "5432"
+  REDIS: "6379"
