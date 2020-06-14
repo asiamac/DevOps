@@ -85,12 +85,17 @@
 
 `kubectl create -f [FILENAME]` - deployment of recipe given in file
 
-name - shorthand:
+resource name - shorthand:
 
-* deployment - deploy,
-* pod - po,
-* replicaset - rs,
-* service - svc.
+* deployments - deploy,
+* pods - po,
+* replicasets - rs,
+* services - svc,
+* configmaps - cs,
+* persistentvolumes - pv,
+* persistentvolumesclaims - pvc,
+* storageclasses - sc,
+* secrets.
 
 `kubectl get [TYPE = deploy | po | rs | svc | ... | all]` - display one, many or all resources
 
@@ -113,3 +118,10 @@ name - shorthand:
 `kubectl replace -f FILENAME [options]`
 
 `kubectl exec -ti [POD_NAME] -- nslookup [SVC_NAME]`
+
+## persistent volumes
+
+Access modes:
+- ReadWrtiteOnce,
+- ReadOnlyMany,
+- ReadWriteMany.
