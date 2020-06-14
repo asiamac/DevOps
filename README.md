@@ -38,3 +38,28 @@ Cluster with:
 URLs:
 * `/` - present current and previous app ID,
 * `/calculate?l1=&l2` - GCD for provided two numbers - from Redis cache or calculated.
+
+## my-cluster3
+Cluster with:
+* Redis,
+* Postgres,
+* services type ClusterIP (Redis - redis-service, Postgres - postgres-service),
+* Dnsutils,
+* backend based on Express.js connected to redis-service and postgres-service,
+URLs:
+* `/` - present current and previous app ID,
+* `/calculate?angle=&speed` - horizontal projectiles of object thrown at certain angle and with provided speed - calculated or from redis cache, saved in postgres,
+* `/all-calculated` for all provided before pairs of angle and speed computed and stored in postgres database horizontal projectiles.
+
+## my-cluster4
+Cluster with:
+* frontend React.js app,
+* Redis,
+* Postgres,
+* services type ClusterIP (Redis - redis-service, Postgres - postgres-service),
+* Dnsutils,
+* backend based on Express.js connected to redis-service and postgres-service,
+URLs:
+* `/` - present current and previous app ID,
+* `/calculate?angle=&speed` - horizontal projectiles of object thrown at certain angle and with provided speed - calculated or from redis cache, saved in postgres,
+* `/all-calculated` for all provided before pairs of angle and speed computed and stored in postgres database horizontal projectiles.
