@@ -69,9 +69,9 @@ Cluster with:
 * frontend React.js app,
 * Redis,
 * Postgres,
-* services type ClusterIP (Redis - redis-service, Postgres - postgres-service),
+* services type ClusterIP (Redis - my-redis-service, Postgres - my-postgres-service),
 * Dnsutils,
-* backend based on Express.js connected to redis-service and postgres-service,
+* backend based on Express.js connected to my-redis-service and my-postgres-service,
 URLs:
 * `/` - present current and previous app ID,
 * `/calculate?angle=&speed` - horizontal projectiles of object thrown at certain angle and with provided speed - calculated or from redis cache, saved in postgres,
