@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+
+kind: Deployment
+
+metadata:
+  name: my-backend-deployment
+  labels:
+    app: my-backend
+    type: backend
+
+spec:
+  template:
+    metadata:
+      name: my-backend-pod
+      labels:
+        app: my-backend
+        type: backend
+    spec:
+      containers:
+        - name: my-backend-container
+          image: jmackowiak/mybackend
+          envFrom:
+            - secretRef:
+                name: my-postgres-secret
+            - configMapRef:
+                name: my-app-configmap
+
+  replicas: 3
+  selector:
+    matchLabels:
+      app: my-backend
+      type: backend

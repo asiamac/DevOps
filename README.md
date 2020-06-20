@@ -63,3 +63,16 @@ URLs:
 * `/` - present current and previous app ID,
 * `/calculate?angle=&speed` - horizontal projectiles of object thrown at certain angle and with provided speed - calculated or from redis cache, saved in postgres,
 * `/all-calculated` for all provided before pairs of angle and speed computed and stored in postgres database horizontal projectiles.
+
+## final-project
+Cluster with:
+* frontend React.js app,
+* Redis,
+* Postgres,
+* services type ClusterIP (Redis - redis-service, Postgres - postgres-service),
+* Dnsutils,
+* backend based on Express.js connected to redis-service and postgres-service,
+URLs:
+* `/` - present current and previous app ID,
+* `/calculate?angle=&speed` - horizontal projectiles of object thrown at certain angle and with provided speed - calculated or from redis cache, saved in postgres,
+* `/all-calculated` for all provided before pairs of angle and speed computed and stored in postgres database horizontal projectiles.
