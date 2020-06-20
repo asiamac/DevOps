@@ -18,12 +18,12 @@ spec:
     spec:
       containers:
         - name: my-backend-container
-          image: jmackowiak/mybackend
+          image: jmackowiak/mybackendproject
           envFrom:
             - secretRef:
                 name: my-postgres-secret
             - configMapRef:
-                name: my-app-configmap
+                name: my-app-config
 
   replicas: 3
   selector:

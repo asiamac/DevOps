@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: my-frontend-container
-          image: jmackowiak/myfrontend
+          image: jmackowiak/myfrontendproject
 
   replicas: 3
   selector:

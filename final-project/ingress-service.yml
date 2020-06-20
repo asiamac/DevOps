@@ -18,5 +18,5 @@ spec:
               servicePort: 5000
           - path: /(.*)
             backend:
-              serviceName: my-fontend-service
-              servicePort: 80
+              serviceName: my-frontend-service
+              servicePort: 3000
