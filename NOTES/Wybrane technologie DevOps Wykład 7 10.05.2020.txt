@@ -1,0 +1,267 @@
+﻿Wybrane technologie DevOps Wykład 7 10.05.2020
+
+Kubernetes
+
+Wielka trójca ma wsparcie
+- Microsoft Azure,
+- Amazon Web Services (AWS),
+- Google Public Cloud (GPC).
+
+Zespół procesów Kebernetes Control Plane (Kubernetes Master)
+
+etcd
+Baza etcd (baza typu klucz wartość, postgres też jest bazą typu klucz wartość) - tu przechowana o całym klastrze, baza danych klastra: jakie węzły, jaka sieć, jakie kontenery – jak to przestanie działać, to tracimy cały klaster
+
+kube-api-server
+Kube-api-server – punkt do którego komunikują się pozostałe węzły, też z roboczych, pełni rolę taką jak demon dockera (np. przez polecenie docker); potrafi zarządzać innymi usługami i się z nimi komunikuję; wystawi api do operowania na całym klastrze
+
+baza etcd i kube-api-server dwa najbardziej krytyczne dla funkcjonowania klastra
+
+kube-controller-manager
+Kube-controller-manager, będziemy korzystać z mangera replikacji (replication controller) - odpowiadającego za skalowalność
+
+kube-scheduler
+Kube-scheduler odpowiada za decydowanie o tym gdzie umieszczamy naszą aplikację (na którym węźle), decyzje między żądanymi a dostępnymi zasobami, decyduje na którym z node’ów ma być umieszczona aplikacja
+
+kubernetes nodes
+Na każdym z węzłów działają przynajmniej dwa procesy
+
+kublet
+wykonywanie poleceń z controle plaina na każdym węźle; odpowiada za ….
+
+kube-proxy
+odpowiada za sieciowość w klastrze
+w klastrze mamy 3 segmenty (warstwy): 1. adresacja ip nodeów, 2. aplikacje (wszystkie aplikacje muszą widzieć siebie nawzajem), 3. serwisy (wysoko poziomowe byty, umożliwiające, bardzo podobnie jak w przypadku dokera, to że nazwa serwisu staje się nazwą widzianą w DNSie w całym klastrze); proces związany z adresacją ip, potrafi wykorzystując mechanizmy związane z ip tables, dokonywać różnych wpisów na node’ach, wpisów typu nad(?) i regułki ip tables
+
+klastry są dynamiczne
+
+Będziemy pracować w trybie, że mamy jeden node raz z wszystkimi kubernetes control plane. Master kubernetes i worker node.
+
+Jeśli minikube: to instalować przez virtualboxa i hyperkit, niezalecane aby przez none.
+
+
+
+>kubectl cluster-info
+
+>kubectl get pods
+→ sprawdzamy jakie mamy pody
+→ kubeclt get deployment, namespace
+Na początku `No resources found.`
+
+>kubectl –help
+>kubectl get –help
+
+>kubectl get pods --namespace=kube-system
+dwie instancje  dnsa
+jest controller manager
+etcd baza
+jest kube proxy, bo mamy instalację gdzie mamy jednocześnie ... i worker plain
+apiserver
+
+przestrzeń nazw zmieniliśmy na kube-system, na razie w defaultowej nazw nie ma
+
+
+vi pod-template.yml
+
+kind rodzaj bytu jaki tworzymy
+
+metadata dostarcza opsiu; najczęściej jest name, warto name’y dodać jakieś prefixy albo sufixy mówiące o tym, że mamy jakiś pod 
+
+sekcja labels, w labelach możemy nadawać sami i klucze i wartości definiować, labele pełnią bardzo ważną rolę, bo później jak będziemy definiować serwisy do jakiego poda, i to dopasowanie jest na bazie labelek
+meatdata name i labels jest obowiązkowe, ale jak labeleki sobie określimy to nasza sprawa
+
+spec to specykifajca określająca odkładnie byt, który definiujemy
+
+spec najbardziej będzie się nam zmieniać, bo będzie pod kątem poszczególnego podu: image, porty, adresy ip, nazwy
+
+w spec dla typu pod podajemy kontenery, klucz jest containers (liczba mnoga, bo może być ich więcej, ale to w specyficznych zastosowaniach) i jest to tablica, uwaga od myślnika jest poszczególny byt – kontener, pierwszy klucz dla danego kontenera jest od myślnika, następne klucze dla tego samego  kontener
+
+>kubectl create -f pod-template.yml
+// dobrze by było nazwać pod-nginx-template.yml
+(to robimy raczej w tym samym folderze ścieżce, co zrobiliśmy vi pod-template.yml)
+
+> kubectl get pod
+teraz już mamy pody
+
+>kubectl describe pod myapp-pod
+label ma wysoki priorytet warto na to patrzeć czy nazwy się zgadzają jak są jakieś problemy 
+każdy pod dostje swój ip, to jest inny segment sieci niż adresacja node’a, pody mają swoją sieciowość
+
+do podów nie możemy wejść z naszej sieci tak bezpośrednio
+
+sekcja Containers
+jakie mamy id kontenera, możemy zobaczyć szczegóły, jaką mamy dokładnie wersję
+
+conditions type status
+
+volumesy, a w nim secrety jeżeli są
+
+sekcja events bardzo ważna, często do niej będziemy zaglądać, jeżeli będą jakieś błędy
+
+1. default scheduler zlecił do docker desktop na utworzenie
+2. podajemy później kublet (prawdziwy wykonowca na każdym nodzie) zaczął już działać
+
+>kubectl delete pod myapp-pod
+
+>kubectl delete pod myapp-pod
+z literówką ngix w image kontenera wtedy po:
+>kubectl get pods
+mamy w statusie `ImagePullBackOff` (przyczyny brak dostępu, bo się gdzieś nie zarejestrowaliśmy, literówki)
+>kubectl describe …
+dokładniej opisane
+
+
+Trzeba mieć na uwadze, że może być wiele podów
+
+
+Skalowanie:
+Repliokwanie: nie powstaje więcej kontenerów w podzie, tylko więcej podów (tej samej aplikacji)
+Możemy sobie zażyczyć, żeby repliki były na różnych węzłach, ale mogą być na tym samym
+
+Wystawienie nowej wersji aplikacji, dwie opcje:
+1. zatrzymanie wszystkich PODów i postawienie ich na nowo,
+albo
+2. stopniowa wymiana PODów na nowe.
+
+POD to cegiełka, coś co zarządza podami to replicaSet, nad tym jeszcze jest deployment
+
+
+>vi rs-template.yml
+specyfikacja wzroca poda, który ma być replikowany
+np.
+```
+spec:
+template:
+metadata:
+name: myapp-pod
+labels:
+app: myapp
+type: frontend
+
+spec:
+containers:
+- name: my-nginx-container
+image: nginx
+```
+
+template – przepis na POD, template po to, jakby trzy repliki zniknęły, żeby był przepis na poda jak wszystkie znikną, a jak wchodzimy w działające środowisko to wtedy podajemy co ma być zreplikowane `selector.matchLabels.type`
+replicas - ile replik
+
+
+> kubectl create -f pod-template.yml
+tworzymy jeden POD
+
+>kubectl get pods                       
+NAME        READY   STATUS              RESTARTS   AGE
+myapp-pod   0/1     ContainerCreating   0          9s
+
+> kubectl create -f rs-template.yml
+Mówimy w rs-template.yml, że chcemy stowrzyć 3 repliki PODów z tym samym przepisem na POD co opisaliśmy w pod-template.yml .
+
+> kubectl get pods
+NAME             READY   STATUS              RESTARTS   AGE
+myapp-pod        1/1     Running             0          25s
+myapp-rs-2c7dr   0/1     ContainerCreating   0          6s
+myapp-rs-rkhzr   1/1     Running             0          6s
+
+Polecenie nam postawiło 2 repliki dodatkowe, bo jedna już była postawiona poleceniem `kubectl create -f pod-template.yml`
+
+> kubectl delete pod myapp-pod
+
+>kubectl get pods
+NAME             READY   STATUS    RESTARTS   AGE
+myapp-rs-2c7dr   1/1     Running   0          51s
+myapp-rs-h2fk6   1/1     Running   0          7s
+myapp-rs-rkhzr   1/1     Running   0          51s
+
+Po usunięciu jednego PODa, ReplicaSet stawia nam nową replikę, żeby były 3 pody, jak ma wpisane w przepisie.
+
+> kubectl get rs
+
+NAME       DESIRED   CURRENT   READY   AGE
+myapp-rs   3         3         3       13m
+
+> kubectl get all
+- stowrzyliśmy replicaset, a ona stworzyła pody
+
+>kubectl get pod myapp-rs-2c7dr
+
+>kubectl describe pod myapp-rs-2c7dr
+
+
+>kubectl scale --replicas=5 replicaset myapp-rs
+replicaset.apps/myapp-rs scaled
+
+>kubectl get rs
+NAME       DESIRED   CURRENT   READY   AGE
+myapp-rs   5         5         3       14m
+
+>kubectl scale --replicas=2 replicaset myapp-rs
+replicaset.apps/myapp-rs scaled
+
+>kubectl get rs
+NAME       DESIRED   CURRENT   READY   AGE
+myapp-rs   2         2         2       14m
+
+
+zmianiy w pliku replicas: 6
+
+>kubectl replace -f rs-template.yml
+replicaset.apps/myapp-rs replaced
+
+>kubectl get rs                   
+NAME       DESIRED   CURRENT   READY   AGE
+myapp-rs   6         6         2       15m
+
+
+Postulaty:
+1. Aplikacja musi być bezstanowa, żeby dała się skalować
+2. I niemutowalne, obraz żeby nie był mutowalny, że jak są parametry konfiguracyjne w image’u, żeby te parametry do innych bytów przenosić. Nie zapisywać tego w image’u, tylko w przeznaczonych do konfiguracji bytach, które na przykład config mapami nazywamy.
+
+Deploymenty to byty, które tworzymy najczęściej. Poprzez deployment możemy wydawać polecenia:
+- zupdatuj się,
+- doprowadź klaster do stanu, że kontenery ma taką a taką wersję,
+- dokonaj rollbacku – wycofaj ostatnie zmiany.
+
+Hierrachia:
+- POD
+nad PODami
+- ReplicaSet
+nad ReplicaSet:
+- deploymenty
+
+
+Czyścimy przed uruchomieniem
+
+```
+>kubectl get rs
+NAME       DESIRED   CURRENT   READY   AGE
+myapp-rs   6         6         6       16m
+
+>kubectl delete rs myapp-rs
+replicaset.apps "myapp-rs" deleted
+```
+
+> kubectl create -f deployment-template.yml
+tworzymy deployment na bazie pliku z `Kind: deployment`
+
+> kubectl get deployments
+NAME       READY   UP-TO-DATE   AVAILABLE   AGE
+myapp-rs   3/6     6            3           11s
+
+sprawdzamy deployment
+
+> kubectl get all
+tutaj widzimy struktrę POD → ReplicaSet → Deployment
+
+
+> kubectl delete deployment myapp-rs 
+deployment.apps "myapp-rs" deleted
+
+usuwanie całego deploymentu
+
+>kubectl get all
+NAME                 TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   52m
+
+

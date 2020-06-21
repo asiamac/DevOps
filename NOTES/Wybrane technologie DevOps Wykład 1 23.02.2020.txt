@@ -1,0 +1,118 @@
+﻿Wybrane technologie DevOps Wykład 1 23.02.2020
+
+
+Technologie, rozwiązania mówiące co się dalej dzieje z aplikacją.
+
+
+Docker
+Kubernetes
+
+
+Kilka systemów w których można tworzyć aplikacje webowe (korzystające z protokołu HTTP, wystawiające api)
+- JVM
+- .NET
+- NodeJS
+- PHP
+
+
+
+
+
+
+
+JVM
+->
+APLIKACJE - ARTEFAKTY
+DEPLOY
+->
+SERWER
+.NET
+->
+
+
+
+NodeJS
+->
+
+
+
+PHP
+->
+
+
+
+DEV
+OPS
+
+
+
+CI – continous implementation
+CD – continous deployment
+
+Na zajęciach skupimy się dwoma aspektami bliżej DEV
+- konteneryzacja – aplikacje, systemy do kolejkowania, kolejkowania
+- orkiestracja – te skonteneryzowane aplikacje, cache, kolejki orkiestrujemy
+
+wojnę konteneryzatorów wygrał Docker
+
+wojnę orkiestratorów wygrał Kubernetes
+
+
+NAMESPACE – przestrzenie nazw.
+
+
+
+Laboratorium
+
+Problemy na ćwiczeniach:
+1) Linux ← pełne prawa
+założenie maszyny wirtualnej (bo inaczej nie będziemy mieć pełnych praw administratora na komputerach uczelnianych)
+(Linux: Virtual Box, Windows: Hyper-V)
+2) Dysk lokalny (tylko Windows, dysk D:\)
+
+
+Jak ktoś ma swojego laptopa:
+→ instalacja dockera:
+Docker For Windows, Docker For Mac, apt get …
+
+Debian Server
+osboxes.org → Debian Server
+
+
+networkctl -a
+sprawdzamy nazwę klienta pod napisem link
+
+dhclient nazwaklienta
+
+
+kontener uruchominoy → proces
+
+image → plik ze „źródłem” konetenera
+
+$docker run hello-world
+
+
+DOCKER DAEMON (serwer) - binarka
+
+Docker dameon i docker cli komunikują się za pomocą API RSTOWEGO
+
+DOCKER CLI
+
+polecenie docker jest częścią docker cli
+
+
+FS (file system) + command
+/var/lib
+
+
+image są ściągane lokalnie
+
+docker ps → pokaże wszystkie uruchomione kontenery i procesy, które widzi
+docker ps -all → wszystkie kontenery
+docker system
+
+docker system info – informacje o systemie
+docker system prune – czyści kontenery
+
+sudo docker run busybox – inny image
+

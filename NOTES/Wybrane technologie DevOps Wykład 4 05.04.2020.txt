@@ -1,0 +1,70 @@
+﻿Wybrane technologie DevOps zajęcia 4 05.04.2020
+
+Redis – trzyma cache → analogia sklep internetowy: koszyk
+PostgresSQL – trzyma dane persystentne → analogia sklep internetowy: ceny, stan magazynu, towary, transakcje
+
+> npm install
+> npm start
+> sudo docker-compose up –build
+
+> docker-compose ps
+w kontekście konkretnego projektu!!
+
+> docker ps
+
+> sudo docker exec -it 660ed100a3b9 sh
+# redis-cli
+127.0.0.1:6379> get counter
+"3"
+127.0.0.1:6379> set counter 11
+OK
+127.0.0.1:6379> exit
+# exit
+
+>curl localhost:9090/
+Counter:11% 
+
+dostajemy w odpowiedzi 11, bo najpierw czyta wartość, a dopiero potem ją inkrementuje
+
+COUNTER
+
+process.exit(0); - zakończenie procesu ze statusem 0 oznacza, że zakończyło się prawidłowo, bo taka była jego logika;
+zakończenie procesu z innym statusem niż 0, oznacza, że zakończyło się z błędem
+
+
+do vi żeby ustawiły się linijki automatycznie:
+:set paste
+
+
+>sudo docker-compose down
+> sudo docker-compose up –build
+> curl localhost:9090/
+
+
+```restart: always```
+restartuje za każdym razem gdy zrobimy:
+> curl localhost:9090/
+
+```restart: „no”```
+nierestartuje, nawet gdy będzie failure, ani gdy zrobimy:
+> curl localhost:9090/
+
+```restart: on-failure```
+restartuje gdy nie będzie process.exit(0); tylko z jakąś inną wartością np. process.exit(1);
+
+
+
+>yarn build
+>tree build/
+
+Wykonanie builda i skopiowanie do image nginx’owego tego statycznego assetu plików js, csss, jpeg, svg itd.
+
+
+> sudo docker build -f Dockerfile.dev .
+
+> sudo docker run -it -p 4000:3000 0cc565783ea0
+uwaga trzeba dodać -’it’ ponieważ jest bug i zamyka automatycznie terminal
+przy uruchamianiu compose’a dodaje się opcję  „tty=true” i wtedy działa
+
+> sudo docker system prune –all
+

@@ -3,7 +3,7 @@ apiVersion: v1
 kind: Service
 
 metadata:
-  name: redis-service
+  name: my-redis-service
 
 spec:
   type: ClusterIP

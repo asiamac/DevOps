@@ -1,0 +1,182 @@
+﻿Wybrane technologie DevOps Wykład 9 07.06.2020
+
+
+cluster jest elementem zamkniętym
+my technicznie przez serwis NodePort definiujemy dostęp
+
+prawdziwie bytem który definiuje dostęp do usług jest ingres
+
+
+POD
+Podstawowym bytem jest POD, najmnijesza jednostka kubernetesa, jest tam jakiś kontener, np. dockerowy.
+POD ma zdolność uruchomienia kontenera wewnątrz.
+Najczęściej jest jeden kontener w podzie.
+
+W rzadkich przypadkach pewnych wzorców (SiteCar, Ambasador, Adapter), które są do zadań specjalnych, są kontenery towarzyszące w PODzie.
+
+
+Replicasety – jak PODy potrafią się replikować.
+Odpowiedzialność: replikacja PODów.
+
+Deployment – PODy istnieją najczęściej w formie deploymentu z ustaloną liczbą replik.
+
+
+Service - komunikacja pomiędzy deploymentami, aby wszystko było odpowiednio widoczne dla Nodów, za to odpowiedzialne są serwisy o typie ClusterIP – serwis który udostępnia jakąś część np. backend
+
+Gdy forntend chce się skomunikować z backendem robi to za pomocą serwisu typu ClusterIP
+
+
+Wystawia usługi na zewnątrz klastra dla celów deweloperskich! Jest NodePort – zakres portów 30 000 do 32767, specjalnie nie są to niskie numery portów.
+
+
+PVC – presisten Value Clame
+Tworzenie nowych PODów i niszczenie starych ma charakter dynamiczny. POD się przewróci, zaraz powstaje nowy. Każdy POD ma swój adres IP.
+
+
+Dla seriwsu typu NodePort jest NodeProxy, które odpowiada za przydzielanie odpowiednich adresów IP, pozwalają na dostęp zorganizowany do PODów, które zmieniają adresy.
+
+PODy są ulotne, zmieniające się.
+
+Persytencja bazy, żeby plik nam został po restarcie klastra.
+
+
+Różne typy dysków:
+- ulotne dane,
+- dane tylko do odczytu,
+- …
+
+Żeby dyskami dobrze zarządzać trzeba trochę doświadczenia i wiedzy, jest to obszar administratora, ale dobry deweloper ogarnie.
+
+
+Persistence Volume - Wolumeny persystencji – odwołuje się, na niskim poziomie, do fizycznych danych (baz danych, które są na dyskach), związany jest z warstwą techniczną 
+
+
+Persistence Volumne Claim - prośba o dane, np.. 10 GB dla danych
+w klastrze definuje się taki claim
+
+Jak deweloper zrobi taki claim to w klastrze występuje provisioning.
+Dwa typy provisioningu:
+- statyczny – static provisioning → administrator definiuje te volumeny, te Persistence Volume, na niskim poziomie, ta prośba dewelopera jest powiązana z konkretnym volumenem (twój claim do konkretnego volumenu) – claim na 5Gi, a Persistence Volumene ma 10Gi, więc trochę stracimy, bo tych 5Gi nikt nie wykorzysta
+- dynamiczny – dynamic provisioning – nie mamy persistence volume, tylko od razu mamy claima, od razu jak claim powstaje to powstaje volumne wg jakiegoś schematu/polityki, np. robi z marginesem o 20% większym, czyli claim %Gi, a Persistence Volume mający 6Gi
+
+Typ dynamiczny dominuje.
+
+Próba ręcznego zarządzania PersistenceVolume to jest błąd. Trzeba wybrać odpoiwedniego dostawcę usługi, odpowiedniego providera do provisioningu związaznego ze storegy’em.
+
+
+Dla kontenerów mamy Container Network Interface, mamy dostawców CNI (popularne Calicium, Flannel, WeaveNet)
+Jeśli klastry są w sieci publicznej (co nie powinno mieć miejsca), to niektórzy CNI oferują szyfrowanie przesyłanych danych między klastrami. - interfejsy do sieci
+
+Dla storage’u mamy Container Storage Interface – interfejsy do storeage’a
+Polecane rozwiązanie: longhorn, longhorn manager
+
+”HA” - high availabilty
+
+Persistence Volume – bardziej dla administraotra
+Persistence Volume Claim – bardziej dla developera
+
+
+definicja claimu
+
+
+
+spec:
+accessModes:
+- ReadWriteOnce – wolumen ma być dostępny na jednym nodzie (ReadWriteMany – pozwala na dostępność wolumenu wielu nodach | ReadOnlyMany)
+
+resources:
+requests:
+storage: 100Mi
+
+
+screen ~/Library/Containers/com.docker → zobaczenie czegoś w klastrze/kontenerze
+
+na klastrze
+pliki jako dyski blokowe
+
+
+plik hello istnieje, pomimo że usunęliśmy poda i wystawiliśmy nowego, mimO, że w nowym nie tworzyliśmy już pliku
+
+
+jeśli korzystamy z longohrna wrto zainstalować UI (accesing the UI)
+
+rzywzyczając się do
+kibi-, mebi-, gibi- bajty
+zaczynamy używać prawdziwcyh wartości – mówimy o potęgach dwójki a nie 10
+
+Reclaim Policy
+Retain – zostają, warto mieć to produkcyjne, klaster się przewróci, a dane pozostaną
+Recycle – usunięcie zawartości
+Delete – dla typów chmurowó, AWS, GCE, Azure Disk
+
+
+args: ["echo Hello > /opt/data/hello.txt"]
+zmiana na
+args: ["sleep 3000"]
+
+
+postgres-deployment.yml
+ważne – dodawać labele, żeby można było się później dostać np. z backendu do bazy
+labels:
+app: my-postgres
+type: db
+
+
+Montowanie volumenu do kontenera postgresowego
+spec:
+containers:
+- name: my-postgres-container
+image: postgres
+volumeMounts:
+- mountPath: /var/lib/postgresql/data/pgdata
+
+
+skąd bierzemy ścieżkę /var/lib/postgresql/data/pgdata ?
+Z dokumentacji się dowiadujemy się z dokumentacji, nie zgadujemy
+
+na forach piszą żeby dodać jeszcze sibPath i name
+volumeMounts:
+  - mountPath: /var/lib/postgresql/data/pgdata
+      subPath: postgres
+      name: postgresvolume
+
+
+jeżeli dla bazy zrobię replicas: 3, to będę mieć trzy kopie bazy danych; to daje trzy oddzielne instancje bazy (np. postgresa), które by chciały uzyskać dostęp do tego samego dysku i byśmy mieli katastrofę
+dla baz nie może być inna wartość dla replicas niż 1!!!
+
+replicas: 1
+selector:
+  matchLabels:
+    type: db
+    app: my-postgres
+
+
+postgres-secret.yml
+co w świecie kubenetesowym oznaczają secrety???
+coś co tak naprawdę nie jest secretem
+base64 - zmiana znaków binarnych do kodu ASCII 64 znakowego
+tu nic nie jest ukryte, to jest dwukierunkowa funkcja, przepis jest deterministyczny
+wygoda jest taka, że zmienia dowolne dane na ASCI
+
+> echo "Hello" | base64
+SGVsbG8K
+
+> echo "SGVsbG8K" | base64 --decode
+Hello
+
+I to jest seceret w kubernetesie
+
+
+config map do przechowywania parametrów konfiguracyjnych
+
+Różnica między apply a create
+
+impereatywny:
+create deployment
+delete deployment
+
+czasem mamy niespójność między stanem klastra a tym co zapisaliśmy w plikach
+
+deklaratywny: zmiana, apply → zastosuj zmiany w deploymenctcie (ale nie w deploymentcie do bazy danych, tam tego nie możemy robić), apply robi nanieś zmiany; niestety nie wszystkie zmiany w PODzie mogę za pomocą apply nanosić: dodanie zmiennej środowiskowej nie powinno być porblemem, nie można zmzienić nazwy, image’a nie można zmienić, jeżeli apply nie działa to trzeba usunąć i utworzyć na nowo, dla miękkich zmian można appply, dla większych trzeba ubić; jeśli nie ma PODa, to apply zadziałą jako create, apply z liczbą replica na 0 (replicas: 0) zadziała jak usunięcie deploymentu; warto na co dzień korzystać ze stylu deklaratywnego
+zamiast imperatywnie: zmiana, delete, create
+

@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 
 metadata:
-  name: postgres-deployment
+  name: my-postgres-deployment
   labels:
     app: my-postgres
     type: db
@@ -11,7 +11,7 @@ metadata:
 spec:
   template:
     metadata:
-      name: postgres-pod
+      name: my-postgres-pod
       labels:
         app: my-postgres
         type: db
@@ -20,7 +20,7 @@ spec:
       volumes:
         - name: postgresvolume
           persistentVolumeClaim:
-            claimName: postgres-pvc-new
+            claimName: my-postgres-pvc
 
       containers:
         - name: my-postgres-container
@@ -33,12 +33,12 @@ spec:
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: postgres-secret
-                  key: PGPASSWORD 
+                  name: my-postgres-secret
+                  key: PGPASSWORD
             - name: POSTGRES_USER
               valueFrom:
                 configMapKeyRef:
-                  name: myapp-config
+                  name: my-app-config
                   key: PGUSER
 
   replicas: 1

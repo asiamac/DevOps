@@ -1,0 +1,36 @@
+﻿Wybrane technologie DevOps zajęcia 5 19.04.2020
+
+>npx create-react-app frontend-hello
+
+
+> docker run -e
+
+-e zmienna środowiskowa, ogólny sposób konfigurowania kontenerów informacją z zewnątrz
+
+
+> sudo docker network
+
+connect     Connect a container to a network
+create      Create a network
+disconnect  Disconnect a container from a network
+inspect     Display detailed information on one or more networks
+ls          List networks
+prune       Remove all unused networks
+rm
+
+> sudo docker network create demoapp
+> sudo docker network ls
+
+utworzył network/sieć o nazwie demoapp typu bridge
+
+docs.docker.com/network/bridge
+
+>sudo docker inspect demoapp
+json z konfiguracją
+
+
+>  docker run --netowrk demoapp --name my-postgres -e POSTGRES_PASSWORD=1qaz2wsx3edc -d postgres
+
+yarn add body-parser express nodemon redis cors pg
+>docker run --network demoapp --name my-postgres psql -h some-postgres -d postgres
+

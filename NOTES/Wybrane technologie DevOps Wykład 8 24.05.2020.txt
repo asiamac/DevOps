@@ -1,0 +1,106 @@
+﻿Wybrane technologie DevOps Wykład 8 24.05.2020
+
+Każdy POD ma swoje ID
+
+Jak wygląda kwestia dostępności/widzialności usług, które są wewnątrz klastra, które umożliwiają wystawienie usług klastra na zewnątrz.
+
+Ciche założenie: środowisko, które konfigurujemy jest środowiskiem deweloperskim/testowym. A mamy dedykowane serwisy w Azure, AWS, Google Cloud itp. wersję produkcyjną
+
+Templete jest po to, żeby można było tworzyć pody jak nie mamy żadnych podów, te same info co mamy w podzie.
+
+
+>kubectl cluster-info
+Kubernetes master is running at https://192.168.39.107:8443
+KubeDNS is running at https://192.168.39.107:8443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+
+To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
+
+Sprawdzamy czy wszystko działa
+
+
+
+> kubectl create -f nginx-deployment.yml
+
+deployment danego przepisu
+
+
+> kubectl get deployment
+to samo
+>kubectl get deploy
+
+> kubectl get replicaset
+to samo
+> kubectl get rs
+
+>kubctl describe deploy my-nginx-deployment
+
+
+Wyciągamy listę podów
+> kubectl get pods
+
+sprawdzamy jaki ma adres IP
+> kubectl describe pod my-nginx-deployment-96878d78b-4w7tr 
+
+
+Cluster jest bardzo mocno tworem prywatnym
+
+Service – żeby wypuścić coś na zewnątrz – organizuje 
+servis – byt wirtualny, istnieje tylko w pamięci klastra, tak naprawdę z klastrem i serwisem związane jest rootwanie adresów najczęściej za pomocą IP tables
+
+service’sy odpowiadają za widzialność … w klastrze
+
+rooting pomiędzy serwisami
+
+
+inne segmenty adresacji: inne ip nodów, inne podów, inne ip serwisów
+
+
+Service NodePort – wystawia na zewnątrz dla Node’a usługę
+
+Servicce Cluster IP - serwis który mówi, że jest usługa/serwis backend, albo my-backened
+
+Container Network Interface (CNI) – dużo plugginów do tego – zajmują się zapewnianiem regulacji ruchu, do tego będą miały dostęp tylko aplikacje typu frontend, a backend tylko do tego
+
+NodePort
+Zakres portów
+Prywatne z zakresu userspace od 30000 do około 32767
+Ograniczenie liczby portów – kwestie bezpieczeństwa
+połączenie między jednym z tych portów do portu 8080 gdzie mamy naszą aplikację odbywa się za pomocą LoadBalancer’a – to jest poza klastrem
+
+
+Sam service też ma swój port
+
+
+W definicji usługi mamy trzy porty:
+- NodePort – jak go nie podamy to zostanie losowany, ale wtedy musimy go skądś wyciągać, ale nie musimy wtedy dbać, żeby się nie powtórzył – u nas w przpeisie małą literą
+- Port w serwisie – z reguły ten sam co w PODzie, nie ma sensu go zmieniać
+- Port w podzie (zdefiniowany w kontenerze) – targetPort
+
+
+>kubectl  describe svc myapp-service
+to samo:
+> kubectl describe service myapp-service
+
+jeżeli tam jest liczba tylu adresów IP w kluczu `Endpoints` ilu replik zdefiniowanych w przepisie na deployment (spec.replicas)
+>kubectl describe service myapp-service
+Name:                     myapp-service
+Namespace:                default
+Labels:                   <none>
+Annotations:              <none>
+Selector:                 app=my-nginx,type=my-frontend
+Type:                     NodePort
+IP:                       10.108.20.232
+Port:                     <unset>  80/TCP
+TargetPort:               80/TCP
+NodePort:                 <unset>  30005/TCP
+Endpoints:                172.17.0.4:80,172.17.0.5:80,172.17.0.6:80
+Session Affinity:         None
+External Traffic Policy:  Cluster
+Events:                   <none>
+
+
+
+redis-service-clusterip.yml
+tutaj nie trzeba definiować spec.type
+
+

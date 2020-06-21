@@ -11,14 +11,14 @@ metadata:
 spec:
   template:
     metadata:
-      name: myfrontend-pod
+      name: my-frontend-pod
       labels:
         app: my-frontend
         type: frontend
     spec:
       containers:
         - name: my-frontend-container
-          image: jmackowiak/myfrontend
+          image: jmackowiak/myfrontendcluster
 
   replicas: 3
   selector:
