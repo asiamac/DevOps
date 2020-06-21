@@ -11,14 +11,19 @@ metadata:
 spec:
   template:
     metadata:
-      name: mybackend-pod
+      name: my-backend-pod
       labels:
         app: my-backend
         type: backend
     spec:
       containers:
         - name: my-backend-container
-          image: jmackowiak/mybackendcluster4
+          image: jmackowiak/mybackendcluster
+          envFrom:
+            - secretRef:
+                name: my-postgres-secret
+            - configMapRef:
+                name: my-app-config
 
   replicas: 3
   selector:

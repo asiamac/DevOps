@@ -1,0 +1,23 @@
+﻿Wybrane technologie DevOps zajęcia 6 26.04.2020
+
+RDBMS – baza persystentna
+
+> sudo docker run –rm name my-postgres -e POSTGRES_PASSWORD=123qaz123qaz ---network my-demo-app postgres
+
+tu się musi tak nazywać zmienna środowiskowa od hasła postgresa:  POSTGRES_PASSWORD
+w keys.js może się nazywać inaczej
+
+
+zmienne środowiskowe wielkimi literami na mocy konwencji
+
+docker-compose.yml
+
+volumes:
+- /opt/app/node_modules
+- ./backend:/opt/app
+
+ma brać docker node_modules od siebie, a z hosta resztę ./backend
+
+
+>sudo docker-compose up –build
+

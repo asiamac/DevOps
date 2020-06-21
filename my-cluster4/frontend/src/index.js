@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import HorizontalDistanceTravel from './HorizontalDistanceTravel';
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <HorizontalDistanceTravel />
   </React.StrictMode>,
   document.getElementById('root')
 );

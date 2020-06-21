@@ -11,7 +11,7 @@ metadata:
 spec:
   template:
     metadata:
-      name: myapp-pod
+      name: my-redis-pod
       labels:
         app: my-redis
         type: cache

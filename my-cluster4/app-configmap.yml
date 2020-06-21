@@ -1,0 +1,15 @@
+apiVersion: v1
+
+kind: ConfigMap
+
+metadata:
+  name: my-app-config
+
+data:
+  REDIS_HOST: "my-redis-service"
+  REDIS_PORT: "6379"
+  PGHOST: "my-postgres-service"
+  PGUSER: "postgres"
+  PGPORT: "5432"
+  PGDATABASE: "postgres"
+  BACKEND_PORT: "5000"

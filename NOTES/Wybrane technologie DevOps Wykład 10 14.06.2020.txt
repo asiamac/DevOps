@@ -1,0 +1,62 @@
+﻿Wybrane technologie DevOps Wykład 10 14.06.2020
+
+Deployment rozciąga się na wiele nodów
+Pod1 może fizycznie trafić na jedną maszynę
+
+DB deployment – deployment związany z bazą danych
+nie robimy więcej replik serwera bazodanowego niż 1, bo wiele baz danych, które odnoszą się do tego samego miejsca na dysku jest przepisem na duże kłopoty
+
+co innego są bazy o różnej dostępności: master, slave, …
+to coś innego niż zduplikowanie poda w którym działa np. postgres
+
+
+ruch wychodzący egres
+ruch przychodzący
+
+Pojęcie wysokiej dostępności:
+- w przypadku awarii jednego z nodeów można podnosić (replicaset)
+→ gdy fizyczna awaria, sam klaster wewnątrz ma zdolność odtworzenia wszystkich elementów, ale co z dostępem z zewnątrz
+Mamy wtedy sprawdzanie czy żyje (healthness – health probe) i czy daje radę przetworzyć żądania (readiness – rediness probe) node, próbkowanie takie, jak nie żyje lub jest przeciążony to przekierowanie na inną maszynę, na inny node, może przekierować ruch nawet do konkretnego poda, może ominąć cluster ip i przekierować na konkretnego poda na innej maszynie
+te rzeczy nazywane są load balancingiem (Load balancer)
+
+reverse proxy:
+- health prove,
+- readiness probe.
+
+load balancer - 
+Load balancing:
+- dociążanie serwerów,
+- rozpraszanie ruchu,
+- session affinity/sticy session.
+
+Dzisiaj już nie wystawimy strony bez TLSa (TLS – Transport Layer Security (mając na myśli cerftyikaty), które błędnie jest wiązany z pojęciem SSL), bez tego przeglądarka uzna stronę za niebezpieczną, TLS - zabezpieczone w warstwie transportowej
+
+TLS termination – które nas zabezpiecza i mówi, że wewnątrz mamy http ruch, a na zewnątrz https
+
+Kiedyś LoadBalancer jako twór kubernetesowy, poza klastrem, serwis load balancer który byłby dostaraczony przez dostawców chmurowych
+
+ingres – normalny byt kubernetesowy z dostępem na zewnątrz
+
+
+layer 7 – warstwy sieciowe – warstwa aplikacji
+warstwa 4 – warstwa transportu
+
+
+Dobre programy:
+- keylock – dobry rzecz do uwierzytelniania i autoryzacji
+- ElasticSerach
+- Kibana
+
+W kubernetesie ingress jako byt, jest normalnym bytem, serwisem jak cluster ip, jak nodeport.
+Natomiast mamy różnych dostawców ingresów.
+Nr 1: nginx ingress controller
+Nr 2: ha proxy
+
+Jak chcemy ingressa to musimy wybrać controller, najczęściej jest to nginx ingress controller
+
+Różnica nginx ingress controllerL ubernetes/niginx-ingress między dostarczonym przeNGINX inc. nginxinx/kubernetes-ingress
+
+
+dla minikube
+instaacja jest w kube-system
+

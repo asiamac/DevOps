@@ -1,0 +1,157 @@
+﻿Wybrane technologie DevOps Wykład 3 22.03.2020
+
+> docker run redis
+> docker exec -it ID_KONTERNERA sh
+> sudo docker exec -it 4282465e1ea8 sh
+
+> set message „hello”
+będzie dostępne w danym kontenerze:
+>get messgae
+nawet gdy wejdziemy z innego terminala, ale nie będzie dostępne w innym kontenerze
+
+
+>sudo docker run nginx
+robiąc kilka razy w różnych terminalach, mamy różne nginxy, nie jest to to samo
+
+kompletna izolacja dysku: namespace i 
+to jest kompletna izolacja i plików i sieci
+
+> sudo docker run -p 90:80 nginx
+> sudo docker run -p 9090:8080 57969122706c
+najpierw port lokalny tu 90, a potem port wewnątrz kontenera tu 80
+
+po każdym wejściu/odświeżeniu strony widać to w konosoli
+
+
+>mkdir mynginx
+>cd mynginx
+>vi Dockerfile
+jedna linijka → jedna komenda
+
+FROM- image z którego zaczynamy
+dobra dystrybucja z którą można można w miarę swobodnie działać jest alpine – dystrybucja zbudowana wokół busyboxa, jest managera pakietów, apt, można doinstalowywać potrzebne programy; dobre na start, jak nie chcemy śrubować rozmiaru imagea
+
+FROM nginx:alpine – wybieramy obraz bazowy
+
+RUN – modyfikujemy go poleceniami
+run i co byśmy chcieli zainstalować to możemy RUN COŚ TAM
+
+RUN echo "<html><body>Hello World</body></html>" > /usr/share/nginx/html/hello.html
+
+CMD [] - komendy
+
+
+package.json – nadrzędny plik konfiguracyjny w node
+
+>npm install
+>npm run start
+
+
+curl.haxx.se
+
+curl dla http
+
+
+>curl localhost:8080
+~Hello from my web app%
+
+
+w deweloperskich wersjach minimum bierzemy node:alpine, później w produkcyjnych możemy mieć node:latest
+
+>vi Dockerfile
+```
+COPY . .
+przekopiuj wszystko do kontenera, uruchom npm install i npm run start
+
+```
+
+> sudo docker run -p 9090:8080 57969122706c
+> curl localhost:9090
+
+
+jak używamy tag latest, to nadpisujemy wcześniej istniejący latest
+
+PRACA Z WIELOMA IMAGEAMI
+
+
+index.js
+```
+const client = redis.createClient({
+  host: '127.0.0.1',
+  port: 6379
+});
+
+```
+
+w host można  wpisać dockerowego host, ale tego się produkcyjnie nie robi
+
+
+>docker-compose
+>sudo docker-compose
+
+>sudo docker-compose.yaml
+
+YAML jak w pythonie → wcięcia , bez różnicy ile spacji, byle zawsze tyle samo dla danego poziomu
+- myślniki, itemy
+
+version – powiedzenie, że ten plik obowiązuje dla wersji 3 
+services – mówi jakie mamy kontenery
+my-redis-server – nasza nazwa, ważna!
+
+Docker-compose.yml
+```
+version: '3'
+
+services:
+        my-redis-server:
+                image: 'redis'
+        my-webapp:
+                build: .
+                ports:
+                        - "9090:8080"
+```
+
+index.js
+```
+const client = redis.createClient({
+  host: 'my-redis-server',
+  port: 6379
+});
+
+```
+
+nazwa serwisu z docker-compose.yml jako nazwa hosta w index.js
+
+> sudo docker-compose up
+> sudo docker-compose up –build
+z flagą build żeby jeszcze raz przebudował
+
+docker-compose żeby prawidłowo interpretował polecenia musi się znajdować w tym katalogu w którym jest docker-compose.yml
+
+> sudo docker-compose ps
+będzie działać wszędzie, z każdego poziomu katalogu
+
+> sudo docker-compose down
+> sudo docker-compose up
+polecenia down i up to są tak naprawdę polecenia run, to nie jest start i stop, run tworzy nowy kontener, więc mamy inne CONTAINER_ID
+
+logowanie
+>sudo docker login
+
+budowanie
+>sudo docker build -t [LOGIN]/[IMAGE_NAME]:[TAG] .
+
+
+odpalenie redisa
+>  sudo docker run redis 
+
+Pushowanie
+> sudo docker push [LOGIN]/[IMAGE_NAME]:[TAG]
+
+
+>sudo docker images
+>sudo docker images -a
+
+
+usunięcie pliku, trzeba usuwać .swp jeśli się chce normalnie pracować, powstają gdy się wyjdzie bez zapisu i dorzucenia pliku
+>rm .Dockerfile.swp  
