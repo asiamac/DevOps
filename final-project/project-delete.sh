@@ -17,5 +17,6 @@ kubectl delete deploy my-redis-deployment
 
 kubectl delete configmap my-app-config
 
+# section for minikube
 #run on final cleaning
 #minikube delete 

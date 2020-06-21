@@ -12,8 +12,12 @@
 #sudo docker push jmackowiak/myfrontendproject
 #cd ..
 
+# section for minikube
 #minikube start #only once
 #minikube addons enable ingress #only once
+
+# section for Mac and Windows
+# kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/cloud/deploy.yaml
 
 kubectl apply -f app-configmap.yml
 
