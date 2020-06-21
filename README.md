@@ -66,13 +66,12 @@ URLs:
 
 ## final-project
 Cluster with:
-* frontend React.js app,
-* Redis,
-* Postgres,
+* frontend React.js app - 3 instances: available in browser on URL `localhost` or `{minikube ip}`,
+* Redis - 1 instance,
+* Postgres - 1 istance,
 * services type ClusterIP (Redis - my-redis-service, Postgres - my-postgres-service),
 * Dnsutils,
-* backend based on Express.js connected to my-redis-service and my-postgres-service,
-URLs:
+* backend based on Express.js connected to my-redis-service and my-postgres-service - 3 instances: available in browser on URL `localhost/api` or `{minikube ip}/api`, and providing endpoints:
 * `/` - present current and previous app ID,
 * `/calculate?angle=&speed` - horizontal projectiles of object thrown at certain angle and with provided speed - calculated or from redis cache, saved in postgres,
 * `/all-calculated` for all provided before pairs of angle and speed computed and stored in postgres database horizontal projectiles.

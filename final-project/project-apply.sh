@@ -1,17 +1,19 @@
 #!/bin/sh
 
-cd backend
-sudo docker build -t jmackowiak/mybackendproject .
-sudo docker push jmackowiak/mybackendproject
-cd ..
+# run section when changes in backend folder
+#cd backend
+#sudo docker build -t jmackowiak/mybackendproject .
+#sudo docker push jmackowiak/mybackendproject
+#cd ..
 
-cd frontend
-sudo docker build -t jmackowiak/myfrontendproject .
-sudo docker push jmackowiak/myfrontendproject
-cd ..
+# run section when changes in frontend folder
+#cd frontend
+#sudo docker build -t jmackowiak/myfrontendproject .
+#sudo docker push jmackowiak/myfrontendproject
+#cd ..
 
-minikube start #only once
-minikube addons enable ingress #only once
+#minikube start #only once
+#minikube addons enable ingress #only once
 
 kubectl apply -f app-configmap.yml
 
