@@ -4,7 +4,7 @@
 
 `docker ps` - show started containers and processes
 
-`docker ps -all` - show all containers
+`docker ps --all` - show all containers
 
 `docker system` - show basic commands
 
@@ -12,7 +12,7 @@
 
 `docker system prune` – cleaning containers
 
-`docker system prune -all` - remove all unused data
+`docker system prune --all` - remove all unused data
 
 `docker run [IMAGE]` - run new container
 
@@ -52,18 +52,18 @@
 
 `docker run --env REDIS_HOS=my-redis --rm --name my-demo-app -v /opt/app/ node_modules -v $(pwd):/opt/app -e PGHOST=my-postgres -e PGDATABASE=postgres -e PGPASSWORD=123qaz123qaz -e PGPORT=5432 [IMAGE_ID]`
 
+`docker run --network [NETWORK_NAME] --name my-postgres psql -h some-postgres -d postgres`
+
 ## docker-compose
 
 `docker-compose` - show basic commands
 
 `docker-compose up` - create and start containers
-`docker-compose up –build` - create, build or rebuild and start containers
+`docker-compose up --build` - create, build or rebuild and start containers
 
 `docker-compose ps` - list containers
 
 `docker-compose down` - stop and remove containers, networks, images, and volumes
-
-`docker run --network [NETWORK_NAME] --name my-postgres psql -h some-postgres -d postgres`
 
 # Minikube
 
@@ -77,16 +77,16 @@
 
 # Kubernetes
 
-`kubectl –help`
+`kubectl --help`
 
-`kubectl [COMMAND] –help`
+`kubectl [COMMAND] --help`
 
 `kubectl cluster-info` - display addresses of the master and services with label kubernetes.io/cluster-service=true
 
 `kubectl create -f [FILENAME]` - deployment of recipe given in file
 
 resource name - shorthand:
-
+* namespaces - ns,
 * deployments - deploy,
 * pods - po,
 * replicasets - rs,
@@ -95,7 +95,8 @@ resource name - shorthand:
 * persistentvolumes - pv,
 * persistentvolumesclaims - pvc,
 * storageclasses - sc,
-* secrets.
+* secrets,
+* ingresses - ing.
 
 `kubectl get [TYPE = deploy | po | rs | svc | ... | all]` - display one, many or all resources
 
@@ -125,3 +126,15 @@ Access modes:
 - ReadWrtiteOnce,
 - ReadOnlyMany,
 - ReadWriteMany.
+
+
+## ingress
+
+* Reverse Prxoy
+* Health probe
+* Readiness probe
+* LoadBalancing
+* Ballast servers
+* Dispersion of traffic
+* Session affinity / Sticky session
+* TLS Termination

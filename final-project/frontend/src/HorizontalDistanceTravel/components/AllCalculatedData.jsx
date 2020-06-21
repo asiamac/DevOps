@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
     flexWrap: 'wrap',
-    flexDirection: 'column',
+    flexDirection: 'column'
   },
   margin: {
     margin: theme.spacing(1),
